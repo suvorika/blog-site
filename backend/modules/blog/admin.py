@@ -1,0 +1,20 @@
+from django.contrib import admin
+
+from mptt.admin import DraggableMPTTAdmin
+from .models import Category, Article
+
+
+@admin.register(Category)
+class CategoryAdmin(DraggableMPTTAdmin):
+    """
+    Админ-панель модели категорий
+    """
+
+    list_display = ("tree_actions", "indented_title", "id", "title", "slug")
+    list_display_links = ("title", "slug")
+    prepopulated_fields = {"slug": ("title",)}
+
+
+@admin.register(Article)
+class ArticleAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("title",)}
