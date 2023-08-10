@@ -1,0 +1,9 @@
+__pycache__
+.venv
+venv/
+ENV/
+env.bak
+venv.bak
+.vscode/
+.history/
+db.sqlite3
