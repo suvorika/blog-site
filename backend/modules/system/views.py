@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.views import (
     LoginView,
+    LogoutView,
     PasswordChangeView,
     PasswordResetView,
     PasswordResetConfirmView,
@@ -194,6 +195,14 @@ class UserRegisterView(UserIsNotAuthenticated, CreateView):
             fail_silently=False,
         )
         return redirect("email_confirmation_sent")
+
+
+class UserLogoutView(LogoutView):
+    """
+    Выход с сайта
+    """
+
+    next_page = "home"
 
 
 class UserConfirmEmailView(View):
