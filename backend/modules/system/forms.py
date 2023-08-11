@@ -7,6 +7,9 @@ from django.contrib.auth.forms import (
     PasswordResetForm,
     SetPasswordForm,
 )
+from django.conf import settings
+from captcha.fields import ReCaptchaField
+from captcha.widgets import ReCaptchaV2Checkbox
 
 from .models import Profile, Feedback
 
@@ -72,6 +75,13 @@ class UserRegisterForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         fields = UserCreationForm.Meta.fields + ("email", "first_name", "last_name")
 
+    recaptcha = ReCaptchaField(
+        widget=ReCaptchaV2Checkbox,
+        public_key=settings.RECAPTCHA_PUBLIC_KEY,
+        private_key=settings.RECAPTCHA_PRIVATE_KEY,
+        label="ReCAPTCHA",
+    )
+
     def clean_email(self):
         """
         Проверка email на уникальность
@@ -117,6 +127,13 @@ class UserLoginForm(AuthenticationForm):
     Форма авторизации на сайте
     """
 
+    recaptcha = ReCaptchaField(
+        widget=ReCaptchaV2Checkbox,
+        public_key=settings.RECAPTCHA_PUBLIC_KEY,
+        private_key=settings.RECAPTCHA_PRIVATE_KEY,
+        label="ReCAPTCHA",
+    )
+
     def __init__(self, *args, **kwargs):
         """
         Обновление стилей формы регистрации
@@ -135,6 +152,13 @@ class UserPasswordChangeForm(SetPasswordForm):
     """
     Форма изменения пароля
     """
+
+    recaptcha = ReCaptchaField(
+        widget=ReCaptchaV2Checkbox,
+        public_key=settings.RECAPTCHA_PUBLIC_KEY,
+        private_key=settings.RECAPTCHA_PRIVATE_KEY,
+        label="ReCAPTCHA",
+    )
 
     def __init__(self, *args, **kwargs):
         """

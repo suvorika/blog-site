@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'mptt',
     'debug_toolbar',
     'taggit',
+    'captcha',
     'modules.blog.apps.BlogConfig',
     'modules.services',
     'modules.system.apps.SystemConfig',
@@ -168,3 +169,7 @@ EMAIL_ADMIN = EMAIL_HOST_USER
 # EMAIL_SERVER = EMAIL_HOST_USER
 # DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # EMAIL_ADMIN = ['wtf?@bk.ru'] # главный email, куда будут все данные приходить с сайта
+
+#  ReCAPTCHA
+RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_PUBLIC_KEY')
+RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_PRIVATE_KEY')
