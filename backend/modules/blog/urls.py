@@ -9,6 +9,7 @@ from .views import (
     ArticleUpdateView,
     ArticleDeleteView,
     CommentCreateView,
+    ArticleByTagListView,
 )
 
 urlpatterns = [
@@ -30,6 +31,11 @@ urlpatterns = [
         "articles/<int:pk>/comments/create/",
         CommentCreateView.as_view(),
         name="comment_create_view",
+    ),
+    path(
+        "articles/tags/<str:tag>/",
+        ArticleByTagListView.as_view(),
+        name="articles_by_tags",
     ),
     path(
         "category/<str:slug>/",

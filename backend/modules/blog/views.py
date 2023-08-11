@@ -11,6 +11,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
+from taggit.models import Tag
 
 from .models import Article, Category, Comment
 from .forms import ArticleCreateForm, ArticleUpdateForm, CommentCreateForm
@@ -31,14 +32,14 @@ class ArticleListView(ListView):
 
 class ArticleDetailView(DetailView):
     model = Article
-    template_name = 'blog/articles_detail.html'
-    context_object_name = 'article'
+    template_name = "blog/articles_detail.html"
+    context_object_name = "article"
     queryset = model.objects.detail()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = self.object.title
-        context['form'] = CommentCreateForm
+        context["title"] = self.object.title
+        context["form"] = CommentCreateForm
         return context
 
 
@@ -56,6 +57,24 @@ class ArticleByCategoryListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = f"Статьи из категории: {self.category.title}"
+        return context
+
+
+class ArticleByTagListView(ListView):
+    model = Article
+    template_name = "blog/articles_list.html"
+    context_object_name = "articles"
+    paginate_by = 10
+    tag = None
+
+    def get_queryset(self):
+        self.tag = Tag.objects.get(slug=self.kwargs["tag"])
+        queryset = Article.objects.all().filter(tags__slug=self.tag.slug)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f"Статьи по тегу: {self.tag.name}"
         return context
 
 

@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth import get_user_model
-
+from taggit.managers import TaggableManager
 from mptt.models import MPTTModel, TreeForeignKey
 from django.urls import reverse
 
@@ -82,7 +82,8 @@ class Article(models.Model):
                 self.get_queryset()
                 .select_related("author", "category")
                 .prefetch_related(
-                    "comments", "comments__author", "comments__author__profile"
+                    "comments", "comments__author",
+                    "comments__author__profile", "tags"
                 )
                 .filter(status="published")
             )
@@ -141,6 +142,7 @@ class Article(models.Model):
     )
 
     objects = ArticleManager()
+    tags = TaggableManager()
 
     class Meta:
         db_table = "app_articles"
