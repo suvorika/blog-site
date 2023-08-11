@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.sites',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -36,6 +37,8 @@ INSTALLED_APPS = [
     'modules.services',
     'modules.system.apps.SystemConfig',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -131,8 +134,7 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Email settings
-
+# Email settings yandex
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
@@ -151,3 +153,17 @@ SERVER_EMAIL = EMAIL_HOST_USER
 # DEFAULT_FROM_EMAIL = EMAIL_HOST_USE
 EMAIL_ADMIN = EMAIL_HOST_USER
 # EMAIL_ADMIN = EMAIL_HOST_USER
+
+# Email settings gogle
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = '587'
+# EMAIL_USE_TLS = True
+
+# EMAIL_HOST_USER = 'you_emailr@gmail.com'
+# EMAIL_HOST_PASSWORD = 'you_password'
+
+# EMAIL_SERVER = EMAIL_HOST_USER
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# EMAIL_ADMIN = ['wtf?@bk.ru'] # главный email, куда будут все данные приходить с сайта
