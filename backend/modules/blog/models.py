@@ -72,6 +72,7 @@ class Article(models.Model):
             return (
                 self.get_queryset()
                 .select_related("author", "category")
+                .prefetch_related("ratings")
                 .filter(status="published")
             )
 
@@ -83,7 +84,11 @@ class Article(models.Model):
                 self.get_queryset()
                 .select_related("author", "category")
                 .prefetch_related(
-                    "comments", "comments__author", "comments__author__profile", "tags"
+                    "comments",
+                    "comments__author",
+                    "comments__author__profile",
+                    "tags",
+                    "ratings",
                 )
                 .filter(status="published")
             )
@@ -167,6 +172,9 @@ class Article(models.Model):
             self.slug = unique_slugify(self, self.title)
         super().save(*args, **kwargs)
 
+    def get_sum_rating(self):
+        return sum([rating.value for rating in self.ratings.all()])
+
 
 class Comment(MPTTModel):
     """
@@ -221,3 +229,40 @@ class Comment(MPTTModel):
 
     def __str__(self):
         return f"{self.author}:{self.content}"
+
+
+class Rating(models.Model):
+    """
+    Модель рейтинга: Лайк - Дизлайк
+    """
+
+    article = models.ForeignKey(
+        to=Article,
+        verbose_name="Статья",
+        on_delete=models.CASCADE,
+        related_name="ratings",
+    )
+    user = models.ForeignKey(
+        to=User,
+        verbose_name="Пользователь",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    value = models.IntegerField(
+        verbose_name="Значение", choices=[(1, "Нравится"), (-1, "Не нравится")]
+    )
+    time_create = models.DateTimeField(
+        verbose_name="Время добавления", auto_now_add=True
+    )
+    ip_address = models.GenericIPAddressField(verbose_name="IP Адрес")
+
+    class Meta:
+        unique_together = ("article", "ip_address")
+        ordering = ("-time_create",)
+        indexes = [models.Index(fields=["-time_create", "value"])]
+        verbose_name = "Рейтинг"
+        verbose_name_plural = "Рейтинги"
+
+    def __str__(self):
+        return self.article.title

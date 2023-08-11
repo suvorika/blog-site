@@ -10,6 +10,8 @@ from .views import (
     ArticleDeleteView,
     CommentCreateView,
     ArticleByTagListView,
+    ArticleSearchResultView,
+    RatingCreateView,
 )
 
 urlpatterns = [
@@ -42,4 +44,6 @@ urlpatterns = [
         ArticleByCategoryListView.as_view(),
         name="articles_by_category",
     ),
+    path("search/", ArticleSearchResultView.as_view(), name="search"),
+    path("rating/", RatingCreateView.as_view(), name="rating"),
 ]

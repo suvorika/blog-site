@@ -1,4 +1,4 @@
-from django.views.generic import DetailView, UpdateView, CreateView, View, TemplateView
+from django.views.generic import DetailView, UpdateView, CreateView, TemplateView, View
 from django.db import transaction
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
