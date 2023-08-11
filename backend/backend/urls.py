@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.conf import settings
 
+from modules.blog.feeds import LatestArticlesFeed
 from modules.blog.sitemaps import StaticSitemap, ArticleSitemap
 
 
@@ -11,6 +12,10 @@ sitemaps = {
     "static": StaticSitemap,
     "articles": ArticleSitemap,
 }
+
+handler403 = 'modules.system.views.tr_handler403'
+handler404 = 'modules.system.views.tr_handler404'
+handler500 = 'modules.system.views.tr_handler500'
 
 urlpatterns = [
     path("ckeditor5/", include("django_ckeditor_5.urls")),
@@ -21,6 +26,7 @@ urlpatterns = [
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
     ),
+    path("feeds/latest/", LatestArticlesFeed(), name="latest_articles_feed"),
     path("", include("modules.blog.urls")),
     path("", include("modules.system.urls")),
 ]
