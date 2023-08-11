@@ -1,5 +1,9 @@
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -8,13 +12,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-v$*wib7mph)9p!158z#*)istd=_(#!0q2y27qpsn+7nkb3-5@#'
-
+SECRET_KEY = os.getenv('SECRET_KEY', default='token')
+# SECRET_KEY = 'django-insecure-v$*wib7mph)9p!158z#*)istd=_(#!0q2y27qpsn+7nkb3-5@#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = os.getenv('DEBUG', default=False)
 
 ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1, localhost').split(', ')
 
 # Application definition
 
@@ -125,3 +130,24 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email settings
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+# EMAIL_PORT = 587
+EMAIL_USE_SSL = True
+# EMAIL_USE_TLS = True
+
+os.getenv('SECRET_KEY', default='token')
+
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# EMAIL_SERVER = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USE
+EMAIL_ADMIN = EMAIL_HOST_USER
+# EMAIL_ADMIN = EMAIL_HOST_USER
