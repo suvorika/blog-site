@@ -1,4 +1,5 @@
 from django.db import models
+from django_ckeditor_5.fields import CKEditor5Field
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth import get_user_model
 from taggit.managers import TaggableManager
@@ -82,8 +83,7 @@ class Article(models.Model):
                 self.get_queryset()
                 .select_related("author", "category")
                 .prefetch_related(
-                    "comments", "comments__author",
-                    "comments__author__profile", "tags"
+                    "comments", "comments__author", "comments__author__profile", "tags"
                 )
                 .filter(status="published")
             )
@@ -94,10 +94,12 @@ class Article(models.Model):
     slug = models.SlugField(
         verbose_name="Альт.название", max_length=255, blank=True, unique=True
     )
-    short_description = models.TextField(
-        verbose_name="Краткое описание", max_length=500
+    short_description = CKEditor5Field(
+        max_length=500, verbose_name="Краткое описание", config_name="extends"
     )
-    full_description = models.TextField(verbose_name="Полное описание")
+    full_description = CKEditor5Field(
+        verbose_name="Полное описание", config_name="extends"
+    )
     thumbnail = models.ImageField(
         verbose_name="Превью поста",
         blank=True,

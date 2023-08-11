@@ -9,7 +9,7 @@
 		<div class="col-8">
 			<div class="card-body">
 				<h5>{{ article.title }}</h5>
-				<p class="card-text">{{ article.full_description }}</p>
+				<p class="card-text">{{ article.full_description|safe }}</p>
 				Категория: <a href="{% url 'articles_by_category' article.category.slug %}">{{ article.category.title }}</a> / Добавил: {{ article.author.username }} / <small>{{ article.time_create }}</small>
 			</div>
 		</div>
@@ -27,5 +27,22 @@
 		</h5>
 		{% include 'blog/comments/comments_list.html' %}
 	</div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div class="card mb-2 border-0">
+    <div class="card-body">
+        <div class="card-title">
+           Похожие статьи
+        </div>
+        <div class="card-text">
+            <ul class="similar-articles">
+                {% for sim_article in similar_articles %}
+                    <li><a href="{{ sim_article.get_absolute_url }}">{{ sim_article.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </div>
 {% endblock %}
