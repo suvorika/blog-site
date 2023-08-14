@@ -12,12 +12,18 @@ from .views import (
     ArticleByTagListView,
     ArticleSearchResultView,
     RatingCreateView,
+    ArticleBySignedUser,
 )
 
 urlpatterns = [
     path("", ArticleListView.as_view(), name="home"),
     path("articles/", articles_list, name="articles_by_page"),
     path("articles/create/", ArticleCreateView.as_view(), name="articles_create"),
+    path(
+        "articles/signed/",
+        ArticleBySignedUser.as_view(),
+        name="articles_by_signed_user",
+    ),
     path(
         "articles/<str:slug>/update/",
         ArticleUpdateView.as_view(),

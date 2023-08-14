@@ -9,6 +9,9 @@ from django.contrib.auth.views import (
     PasswordResetView,
     PasswordResetConfirmView,
 )
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.sites.models import Site
 from django.contrib.auth import get_user_model
@@ -45,7 +48,13 @@ class ProfileDetailView(DetailView):
     model = Profile
     context_object_name = "profile"
     template_name = "system/profile_detail.html"
-    queryset = model.objects.all().select_related("user")
+    queryset = (
+        model.objects.all()
+        .select_related("user")
+        .prefetch_related(
+            "followers", "followers__user", "following", "following__user"
+        )
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -92,6 +101,39 @@ class ProfileUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy("profile_detail", kwargs={"slug": self.object.slug})
+
+
+@method_decorator(login_required, name="dispatch")
+class ProfileFollowingCreateView(View):
+    """
+    Создание подписки для пользователей
+    """
+
+    model = Profile
+
+    def is_ajax(self):
+        return self.request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+    def post(self, request, slug):
+        user = self.model.objects.get(slug=slug)
+        profile = request.user.profile
+        if profile in user.followers.all():
+            user.followers.remove(profile)
+            message = f"Подписаться на {user}"
+            status = False
+        else:
+            user.followers.add(profile)
+            message = f"Отписаться от {user}"
+            status = True
+        data = {
+            "username": profile.user.username,
+            "get_absolute_url": profile.get_absolute_url(),
+            "slug": profile.slug,
+            "avatar": profile.get_avatar,
+            "message": message,
+            "status": status,
+        }
+        return JsonResponse(data, status=200)
 
 
 class UserLoginView(SuccessMessageMixin, LoginView):

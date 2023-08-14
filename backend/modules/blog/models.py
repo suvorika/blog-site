@@ -5,8 +5,8 @@ from django.contrib.auth import get_user_model
 from taggit.managers import TaggableManager
 from mptt.models import MPTTModel, TreeForeignKey
 from django.urls import reverse
-
-from modules.services.utils import unique_slugify
+from modules.services.utils import unique_slugify, image_compress
+from datetime import date
 
 User = get_user_model()
 
@@ -72,7 +72,7 @@ class Article(models.Model):
             return (
                 self.get_queryset()
                 .select_related("author", "category")
-                .prefetch_related("ratings")
+                .prefetch_related("ratings", "views")
                 .filter(status="published")
             )
 
@@ -84,11 +84,7 @@ class Article(models.Model):
                 self.get_queryset()
                 .select_related("author", "category")
                 .prefetch_related(
-                    "comments",
-                    "comments__author",
-                    "comments__author__profile",
-                    "tags",
-                    "ratings",
+                    "comments", "comments__author", "comments__author__profile", "tags"
                 )
                 .filter(status="published")
             )
@@ -164,6 +160,10 @@ class Article(models.Model):
     def get_absolute_url(self):
         return reverse("articles_detail", kwargs={"slug": self.slug})
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__thumbnail = self.thumbnail if self.pk else None
+
     def save(self, *args, **kwargs):
         """
         Сохранение полей модели при их отсутствии заполнения
@@ -172,8 +172,24 @@ class Article(models.Model):
             self.slug = unique_slugify(self, self.title)
         super().save(*args, **kwargs)
 
+        if self.__thumbnail != self.thumbnail and self.thumbnail:
+            image_compress(self.thumbnail.path, width=500, height=500)
+
     def get_sum_rating(self):
         return sum([rating.value for rating in self.ratings.all()])
+
+    def get_view_count(self):
+        """
+        Возвращает количество просмотров для данной статьи
+        """
+        return self.views.count()
+
+    def get_today_view_count(self):
+        """
+        Возвращает количество просмотров для данной статьи за сегодняшний день
+        """
+        today = date.today()
+        return self.views.filter(viewed_on__date=today).count()
 
 
 class Comment(MPTTModel):
@@ -263,6 +279,27 @@ class Rating(models.Model):
         indexes = [models.Index(fields=["-time_create", "value"])]
         verbose_name = "Рейтинг"
         verbose_name_plural = "Рейтинги"
+
+    def __str__(self):
+        return self.article.title
+
+
+class ViewCount(models.Model):
+    """
+    Модель просмотров для статей
+    """
+
+    article = models.ForeignKey(
+        "Article", on_delete=models.CASCADE, related_name="views"
+    )
+    ip_address = models.GenericIPAddressField(verbose_name="IP адрес")
+    viewed_on = models.DateTimeField(auto_now_add=True, verbose_name="Дата просмотра")
+
+    class Meta:
+        ordering = ("-viewed_on",)
+        indexes = [models.Index(fields=["-viewed_on"])]
+        verbose_name = "Просмотр"
+        verbose_name_plural = "Просмотры"
 
     def __str__(self):
         return self.article.title

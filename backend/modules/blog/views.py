@@ -16,6 +16,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from taggit.models import Tag
+from .mixins import ViewCountMixin
 
 from .models import Article, Category, Comment, Rating
 from .forms import ArticleCreateForm, ArticleUpdateForm, CommentCreateForm
@@ -35,29 +36,25 @@ class ArticleListView(ListView):
         return context
 
 
-class ArticleDetailView(DetailView):
+class ArticleDetailView(ViewCountMixin, DetailView):
     model = Article
-    template_name = "blog/articles_detail.html"
-    context_object_name = "article"
+    template_name = 'blog/articles_detail.html'
+    context_object_name = 'article'
     queryset = model.objects.detail()
 
     def get_similar_articles(self, obj):
-        article_tags_ids = obj.tags.values_list("id", flat=True)
-        similar_articles = Article.objects.filter(tags__in=article_tags_ids).exclude(
-            id=obj.id
-        )
-        similar_articles = similar_articles.annotate(
-            related_tags=Count("tags")
-        ).order_by("-related_tags")
+        article_tags_ids = obj.tags.values_list('id', flat=True)
+        similar_articles = Article.objects.filter(tags__in=article_tags_ids).exclude(id=obj.id)
+        similar_articles = similar_articles.annotate(related_tags=Count('tags')).order_by('-related_tags')
         similar_articles_list = list(similar_articles.all())
         random.shuffle(similar_articles_list)
         return similar_articles_list[:6]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = self.object.title
-        context["form"] = CommentCreateForm
-        context["similar_articles"] = self.get_similar_articles(self.object)
+        context['title'] = self.object.title
+        context['form'] = CommentCreateForm
+        context['similar_articles'] = self.get_similar_articles(self.object)
         return context
 
 
@@ -138,6 +135,28 @@ class ArticleUpdateView(AuthorRequiredMixin, SuccessMessageMixin, UpdateView):
         # form.instance.updater = self.request.user
         form.save()
         return super().form_valid(form)
+
+
+class ArticleBySignedUser(LoginRequiredMixin, ListView):
+    """
+    Представление, выводящее список статей авторов, на которые подписан текущий пользователь
+    """
+
+    model = Article
+    template_name = "blog/articles_list.html"
+    context_object_name = "articles"
+    login_url = "login"
+    paginate_by = 10
+
+    def get_queryset(self):
+        authors = self.request.user.profile.following.values_list("id", flat=True)
+        queryset = self.model.objects.all().filter(author__id__in=authors)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Статьи авторов"
+        return context
 
 
 class ArticleDeleteView(AuthorRequiredMixin, DeleteView):
