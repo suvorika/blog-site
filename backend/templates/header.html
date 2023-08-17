@@ -1,43 +1,53 @@
-<header class="mt-3">
-  <div class="px-3 py-2 text-bg-dark" style="border-radius: 10px 10px 0 0;">
+{% load static %}
+{% load mptt_tags blog_tags %}
+<header class="mt-3 navbar-light bg-light">
+  <div class="px-3 py-2 text-bg-white mb-2" style="border-radius: 10px;">
     <div class="container">
-      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start flex-row">
         <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
-          <img width="64" src="https://cdn-icons-png.flaticon.com/512/8277/8277654.png"/>
+          <img width="48" src="/media/icon/junior_m.png"/>
         </a>
 
         <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
-          <li>
-            <a href="{% url 'home' %}" class="nav-link text-secondary">
-              <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#home"></use></svg>
-              Главная
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'articles_create' %}" class="nav-link text-white">
-              <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"></use></svg>
-              Добавить статью
-            </a>
-          </li>
-        </ul>
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'home' %}" class="py-4 px-2" style="color:#000000;">Главная</a>
 
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle my-3" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false"  style="color:#000000;">
+                <img width="24" src="/media/icon/category.png"/> Категории
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                {% full_tree_for_model blog.Category as categories %}
+                <div class="card-text">
+                  <ul>
+                    {% recursetree categories %}
+                    <li>
+                      <a href="{{ node.get_absolute_url }}" style="color:#000000;">{{ node.title }}</a>
+                    </li>
+                    {% if not node.is_leaf_node %}
+                    <ul>
+                    {% endif %} {{children}} {% if not node.is_leaf_node %}
+                    </ul>
+                    {% endif %} {% endrecursetree %}
+                  </ul>
+                </div>
+              </ul>
+            </li>
+            <form class="col-12 col-lg-auto my-2 my-lg-0 mr-sm-2" role="search" method="get" action="{% url 'search' %}">
+              <input type="search" class="form-control my-3" placeholder="Поиск..." aria-label="Search" name='do' autocomplete="off" id="search">
+            </form>
+            <a href="{% url 'articles_create' %}" class="py-4 px-2" style="color:#000000;"><img width="32" src="/media/icon/create.png"/></a>
+            <a href="#" class="py-4 px-2" style="color:#000000;">Contacts</a>
+            <a class="py-4 px-2" href="{% url 'profile_detail' request.user.profile.slug %}" style="color:#000000;"><img width="24" src="/media/icon/profile.png"/></a>
+            <a class="py-4 px-2" href="{% url 'logout' %}" style="color:#000000;">Выйти</a>
+            {% else %}
+            <a class="py-4 px-2" href="{% url 'login' %}" style="color:#000000;">Войти</a>
+            <a class="py-4 px-2" href="{% url 'register' %}" style="color:#000000;">Регистрация</a>
+          {% endif %}
+
+        </ul>
       </div>
     </div>
   </div>
-  <div class="px-3 py-2 bg-light mb-3" style="border-radius: 0 0 10px 10px;">
-    <div class="container d-flex flex-wrap justify-content-center">
-      <form class="col-12 col-lg-auto mb-2 mb-lg-0 me-lg-auto" role="search" method="get" action="{% url 'search' %}">
-        <input type="search" class="form-control" placeholder="Search..." aria-label="Search" name='do' autocomplete="off" id="search">
-      </form>
-      {% if request.user.is_authenticated %}
-        <a href="{% url 'profile_detail' request.user.profile.slug %}" type="button" class="btn btn-secondary me-2"> {{ request.user.username }}</a>
-        <a href="{% url 'logout' %}" type="button" class="btn btn-primary">Деавторизация</a>
-      {% else %}
-      <div class="text-end">
-        <a href="{% url 'login' %}" type="button" class="btn btn-light text-dark me-2">Авторизация</a>
-        <a href="{% url 'register' %}" type="button" class="btn btn-primary">Регистрация</a>
-      </div>
-      {% endif %}
-    </div>
-  </div>
+
 </header>

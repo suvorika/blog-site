@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+
+{% block title %}
+{{ category.title }}
+{% endblock title %}
+
+{% block content %}
+<ul>
+    {% for category in categories %}
+    <h3>{{ category.name }}</h3>
+    {% empty %}
+    <p>No categories found.</p>
+    {% endfor %}
+</ul>
+{% endblock content %}

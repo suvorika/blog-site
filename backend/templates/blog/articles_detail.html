@@ -11,7 +11,9 @@
 			<div class="card-body">
 				<h5>{{ article.title }}</h5>
 				<p class="card-text">{{ article.full_description|safe }}</p>
-				Категория: <a href="{% url 'articles_by_category' article.category.slug %}">{{ article.category.title }}</a> / Добавил: {{ article.author.username }} / <small>{{ article.time_create }}</small>
+				<a href="{% url 'articles_by_category' article.category.slug %}" style="color:#3766A9;"><img width="24" src="/media/icon/category.png"/> {{ article.category.title }}</a>
+				<a href="{% url 'profile_detail' request.user.profile.slug %}" style="color:#3766A9;">   <img width="24" src="/media/icon/profile.png"/>   {{ article.author.username }}</a>
+				<small><img width="24" src="/media/icon/create.png"/>{{ article.time_create }}</small>
 			</div>
 		</div>
 	</div>
@@ -47,7 +49,7 @@
            Похожие статьи
         </div>
         <div class="card-text">
-            <ul class="similar-articles">
+            <ul class="similar-articles" style="color:#000000;">
                 {% for sim_article in similar_articles %}
                     <li><a href="{{ sim_article.get_absolute_url }}">{{ sim_article.title }}</a></li>
                 {% endfor %}

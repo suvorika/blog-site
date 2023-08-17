@@ -9,7 +9,7 @@
 			<ul>
 				{% recursetree categories %}
 				<li>
-					<a href="{{ node.get_absolute_url }}">{{ node.title }}</a>
+					<a href="{{ node.get_absolute_url }}" style="color:#000000;">{{ node.title }}</a>
 				</li>
 				{% if not node.is_leaf_node %}
 				<ul>
@@ -41,7 +41,7 @@
 	<div class="card-body">
 		<h5 class="card-title">Популярные статьи за 7 дней</h5>
 		<div class="card-text">
-			<ul>
+			<ul style="color:#000000;">
 				{% popular_articles as articles_list %} 
         		{% for article in articles_list %}
 				<li><a href="{{ article.get_absolute_url }}">{{ article.title }}</a> ({{ article.get_view_count }}) +({{ article.get_today_view_count}})</li>

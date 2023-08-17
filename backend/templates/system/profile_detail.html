@@ -11,15 +11,15 @@
 			</div>
 			<div class="col-md-9">
 				<h5 class="card-title">
-					{{ profile }}
+					Вас зовут: {{ profile }}
 				</h5>
 				<div class="card-text">
 					<ul>
-						<li>Никнейм: {{ profile.user.username }}</li>
+						<li>Ваш никнейм: {{ profile.user.username }}</li>
 						{% if profile.user.get_full_name %}
 						<li>Имя и фамилия: {{ profile.user.get_full_name }}</li>
 						{% endif %}
-						<li>Заходил: {{ profile.user.last_login }} | {% if profile.is_online %}Онлайн{% else %}Не в сети{% endif %}</li>
+						<li>Последний заход: {{ profile.user.last_login }} | {% if profile.is_online %}Онлайн{% else %}Не в сети{% endif %}</li>
 						<li>Дата рождения: {{ profile.birth_date }}</li>
 						<li>О себе: {{ profile.bio }}</li>
 					</ul>

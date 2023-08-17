@@ -46,7 +46,7 @@ urlpatterns = [
         name="articles_by_tags",
     ),
     path(
-        "category/<str:slug>/",
+        "category/<slug:slug>/",
         ArticleByCategoryListView.as_view(),
         name="articles_by_category",
     ),
