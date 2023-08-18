@@ -1,10 +1,14 @@
-{% extends 'main.html' %}
+{% extends 'main.html' %}githubr
 {% load static %}
 
 {% block content %}
     {% for article in articles %}
     <div class="card mb-3">
-        <div class="row">
+        <div class="row"> 
+            <div class="sprava" id="sprava" style="float:right;">
+                <a href="{% url 'articles_by_category' article.category.slug %}" style="color:#3766A9;"><img width="24" src="/media/icon/category.png"/> {{ article.category.title }}</a>
+                <a href="{% url 'profile_detail' article.author.profile.slug %}" style="color:#3766A9;"><img width="24" src="/media/icon/profile.png"/> {{ article.author.username }}</a>
+            </div> 
             <div class="col-4">
                 <img src="{{ article.thumbnail.url }}" class="card-img-top" alt="{{ article.title }}">
             </div>
@@ -13,22 +17,21 @@
                     <h5 class="card-title"><a href="{{ article.get_absolute_url }}" style="color:#000000;">{{ article.title }}</a></h5>
                     <p class="card-text">{{ article.short_description|safe }}</p>
                     </hr>
-                    <div class="rating-buttons"> 
-                        <button class="btn btn-sm btn-primary" data-article="{{ article.id }}" data-value="1">лайк</button>
-                        <button class="btn btn-sm btn-secondary" data-article="{{ article.id }}" data-value="-1">Дизлайк</button>
-                        <button class="btn btn-sm btn-secondary rating-sum">{{ article.get_sum_rating }}</button>
-                        <a href="{% url 'articles_by_category' article.category.slug %}" style="color:#3766A9;"><img width="24" src="/media/icon/category.png"/> {{ article.category.title }}</a>
-                        <a href="{% url 'profile_detail' article.author.profile.slug %}" style="color:#3766A9;"><img width="24" src="/media/icon/profile.png"/> {{ article.author.username }}</a>
-                        <img src="/media/icon/see.png"  width="24"/> {{ article.get_view_count }}
-                    </div>  
-                </div>
-            </div>
+                 </div>
 
-        </div>     
+            </div>
+        </div>
+        <div class="rating-buttons"> 
+            <button class="btn btn-sm btn-primary" id="scattering" data-article="{{ article.id }}" data-value="1">
+                <button class="btn btn-sm btn-secondary rating-sum">{{ article.get_sum_rating }}</button>
+            </button>
+            <img src="/media/icon/see.png"  width="24"/> {{ article.get_view_count }}
+        </div> 
     </div>
     {% endfor %}
 {% endblock %}
 
 {% block script %}
 <script src="{% static 'custom/js/ratings.js' %}"></script>
+<script src="{% static 'custom/js/like.js' %}"></script>
 {% endblock%}

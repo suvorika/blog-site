@@ -1,0 +1,43 @@
+#scattering {
+    --bs-btn-border-color: white;
+    --bs-btn-hover-border-color: white;
+    width: 35px;
+    height: 35px;
+    left: 50%;
+    top: 50%;
+    background: url(http://zornet.ru/ABVUN/Aba/detunis/supasnab/heart.png) no-repeat;
+    background-position: center;
+    cursor: pointer;
+
+}
+#scattering:active {
+  --bs-btn-border-color: white;
+  --bs-btn-hover-border-color: white;
+  background-position: center;
+  -webkit-transform: scale(1.5);
+  transform: scale(1.5);
+  cursor: zoom-шт;
+  transition: background 1s steps(20);
+  --bs-btn-active-border-color: white;
+}
+@keyframes fave-heart {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -100px 0;
+  }
+}
+
+.btn-secondary {
+    --bs-btn-color: #000;
+    --bs-btn-bg: white;
+    --bs-btn-border-color: white;
+    --bs-btn-hover-bg: white;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-border-color: white;
+}
+
+.sprava {
+
+  }
